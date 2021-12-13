@@ -27,7 +27,7 @@ description: I love software development, maybe I should write about it...
 #github_username:  jekyll
 
 # Build settings
-remote_theme: pages-themes/slate@v0.2.0
+theme: minima
 plugins:
   - jekyll-feed
 
