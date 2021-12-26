@@ -3,6 +3,9 @@ author: Dirk Groot
 description: I love software development, maybe I should write about it...
 permalink: /:year/:month/:day/:title:output_ext
 
+disqus:
+  shortname: dirkgroot-github
+
 minima:
   skin: dark
   social_links:
