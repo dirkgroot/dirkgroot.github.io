@@ -10,7 +10,7 @@ menu:
   main:
   - identifier: blog
     name: Blog
-    url: /posts/
+    url: /
     weight: 10
   - identifier: tags
     name: Tags
@@ -21,7 +21,7 @@ menu:
     url: /archives/
     weight: 25
   - identifier: about
-    name: About
+    name: About me
     url: /about/
     weight: 30
 
@@ -52,12 +52,12 @@ params:
 
   homeInfoParams:
     Title: Welcome!
-    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment to see if I have enough inspiration to write about it somewhat regularly.
+    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about) if you want to know more about me.
 
   socialIcons:
-    - name: twitter
-      url: "https://twitter.com/dirk__groot"
     - name: github
       url: "https://github.com/dirkgroot"
     - name: linkedin
       url: "https://www.linkedin.com/in/dirkgroot77"
+    - name: twitter
+      url: "https://twitter.com/dirk__groot"
