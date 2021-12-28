@@ -4,6 +4,7 @@ title: Dirk Groot
 theme: PaperMod
 paginate: 5
 disqusShortname: dirkgroot-github
+googleAnalytics: G-TBE6V39YXJ
 enableRobotsTXT: true
 
 menu:
@@ -20,6 +21,10 @@ menu:
     name: Archive
     url: /archives/
     weight: 25
+  - identifier: search
+    name: Search
+    url: /search/
+    weight: 27
   - identifier: about
     name: About me
     url: /about/
@@ -39,7 +44,7 @@ params:
   disableThemeToggle: false
   ShowReadingTime: true
   ShowShareButtons: false
-  ShowPostNavLinks: false
+  ShowPostNavLinks: true
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: false
   disableSpecial1stPost: false
@@ -52,7 +57,9 @@ params:
 
   homeInfoParams:
     Title: Welcome!
-    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about) if you want to know more about me.
+    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment 
+             to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about) 
+             if you want to know more about me.
 
   socialIcons:
     - name: github
@@ -61,3 +68,9 @@ params:
       url: "https://www.linkedin.com/in/dirkgroot77"
     - name: twitter
       url: "https://twitter.com/dirk__groot"
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
