@@ -2,7 +2,7 @@
 title: "My First Post"
 date: 2021-12-28T13:57:12+01:00
 draft: false
-comments: true
+comments: false
 tags: ["tdd", "kotlin"]
 ---
 ## Welcome!
