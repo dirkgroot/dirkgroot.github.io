@@ -36,7 +36,7 @@ params:
   keywords: [blog, developer, personal]
   gravatar: dirk.inge@gmail.com
   defaultTheme: auto
-  disableThemeToggle: true
+  disableThemeToggle: false
   ShowReadingTime: true
   ShowShareButtons: false
   ShowPostNavLinks: false
