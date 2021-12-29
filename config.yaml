@@ -1,0 +1,76 @@
+baseURL: https://dirkgroot.github.io
+languageCode: en-us
+title: Dirk Groot
+theme: PaperMod
+paginate: 5
+disqusShortname: dirkgroot-github
+googleAnalytics: G-TBE6V39YXJ
+enableRobotsTXT: true
+
+menu:
+  main:
+  - identifier: blog
+    name: Blog
+    url: /
+    weight: 10
+  - identifier: tags
+    name: Tags
+    url: /tags/
+    weight: 20
+  - identifier: archives
+    name: Archive
+    url: /archives/
+    weight: 25
+  - identifier: search
+    name: Search
+    url: /search/
+    weight: 27
+  - identifier: about
+    name: About me
+    url: /about/
+    weight: 30
+
+taxonomies:
+  tag: "tags"
+ 
+params:
+  env: production
+  author: "Dirk Groot"
+  info: "Software architect"
+  description: "Software architect"
+  keywords: [blog, developer, personal]
+  gravatar: dirk.inge@gmail.com
+  defaultTheme: auto
+  disableThemeToggle: false
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: false
+  disableSpecial1stPost: false
+  disableScrollToTop: false
+  comments: true
+  hidemeta: false
+  hideSummary: false
+  showtoc: false
+  tocopen: false
+
+  homeInfoParams:
+    Title: Welcome!
+    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment 
+             to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about) 
+             if you want to know more about me.
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/dirkgroot"
+    - name: linkedin
+      url: "https://www.linkedin.com/in/dirkgroot77"
+    - name: twitter
+      url: "https://twitter.com/dirk__groot"
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON

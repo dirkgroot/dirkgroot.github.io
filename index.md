@@ -1,3 +1,0 @@
-## Welcome to Dirk's GitHub Pages
-
-Coming soon...
