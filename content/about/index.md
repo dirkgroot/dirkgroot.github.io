@@ -9,7 +9,7 @@ has been my greatest passion since my early teens.
 When I was about 10 years old, my uncle gave me a Commodore 64. With it, he also gave me some C64 magazines. These magazines
 contained some information about programming, which I found very interesting. Not long afterwards, programming was my biggest hobby.
 
-Since I started working as a software engineer in 1999, I've worked on many different kinds of software: Embedded, windows forms,
+Since I started working as a software engineer in 1997, I've worked on many different kinds of software: Embedded, windows forms,
 frontend, backend, transaction oriented, batch oriented, etc. I've also used many programming languages, and I'm always eager to
 learn more. Currently, my favourites are Kotlin, TypeScript and Clojure.
 
