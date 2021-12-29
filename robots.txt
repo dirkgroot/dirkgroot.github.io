@@ -1,3 +1,3 @@
 User-agent: *
 Disallow:
-Sitemap: https://dirkgroot.github.io/sitemap.xml
+Sitemap: https://blog.dirkgroot.nl/sitemap.xml
