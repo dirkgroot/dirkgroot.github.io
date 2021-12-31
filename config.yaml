@@ -34,7 +34,6 @@ taxonomies:
   tag: "tags"
  
 params:
-  env: production
   author: "Dirk Groot"
   info: "Software architect"
   description: "Software architect"
