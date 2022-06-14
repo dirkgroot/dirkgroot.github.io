@@ -1,0 +1,26 @@
+@startuml
+
+skinparam backgroundColor transparent
+
+title Robot Worlds
+footer Container diagram
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(player, "Player")
+Person(serverAdmin, "Server admin")
+
+System_Boundary(robotWorlds, "Robot Worlds", "The Robot Worlds game") {
+    Container(client, "Client", "", "Renders the game and handles player input (keyboard, mouse)")
+    Container(server, "Server", "", "Maintains the state of the world and the robots in it")
+}
+
+Rel(player, client, "Plays the game using", "Some UI technology")
+Rel(serverAdmin, server, "Manages the world by issuing commands", "Console interface")
+
+Rel_R(client, server, "Sends commands to", "JSON over TCP socket")
+
+SHOW_LEGEND()
+
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+
+title Launch command
+footer Sequence diagram
+
+skinparam backgroundColor transparent
+autonumber
+
+Player -> Client: Launch robot (via UI)
+Client -> Server: {"command": "launch"} (via TCP)
+Server -> World: launchRobot()
+Server <-- World: OK
+Client <-- Server: {"result": "OK"} (via TCP)
+Player <-- Client: "OK" (via UI)
+
+@enduml
