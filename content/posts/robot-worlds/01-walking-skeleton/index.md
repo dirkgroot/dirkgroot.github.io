@@ -1,7 +1,7 @@
 ---
 title: "Robot Worlds 1: Walking Skeleton"
-date: 2022-06-14T17:44:08Z
-draft: true
+date: 2022-06-14T20:14:13Z
+draft: false
 tags: [walking-skeleton, robot-worlds, kotlin, tdd]
 ---
 {{< summary >}}
