@@ -6,6 +6,7 @@ paginate: 5
 disqusShortname: dirkgroot-github
 googleAnalytics: G-TBE6V39YXJ
 enableRobotsTXT: true
+enableEmoji: true
 
 menu:
   main:
@@ -32,27 +33,36 @@ menu:
 
 taxonomies:
   tag: "tags"
- 
+
+markup:
+  highlight:
+    codeFences: true
+#    style: solarized-dark256
+    style: api
+
 params:
   author: "Dirk Groot"
   info: "Software architect"
   description: "Software architect"
   keywords: [blog, developer, personal]
-  gravatar: dirk.inge@gmail.com
-  defaultTheme: auto
-  disableThemeToggle: false
+  gravatar: dirkgroot77@gmail.com
+  defaultTheme: light
+  disableThemeToggle: true
   ShowReadingTime: true
   ShowShareButtons: false
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
-  ShowCodeCopyButtons: false
+  ShowCodeCopyButtons: true
   disableSpecial1stPost: false
   disableScrollToTop: false
   comments: true
   hidemeta: false
   hideSummary: false
-  showtoc: false
+  showtoc: true
   tocopen: false
+
+  assets:
+    disableHLJS: true
 
   homeInfoParams:
     Title: Welcome!
