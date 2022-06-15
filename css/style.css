@@ -5,6 +5,6 @@ summary {
 }
 
 .figure-border img {
-    box-shadow: 0 0 10px 0 var(--code-bg);
+    box-shadow: 0 0 10px 0 var(--tertiary);
     background-color: var(--code-bg);
 }
