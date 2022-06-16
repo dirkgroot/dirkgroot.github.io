@@ -37,7 +37,6 @@ taxonomies:
 markup:
   highlight:
     codeFences: true
-#    style: solarized-dark256
     style: api
 
 params:
