@@ -100,7 +100,7 @@ fun `create a request from JSON`() {
 }
 ```
 
-I'll let IntelliJ an stub for `Request::fromJSON`.
+I'll let IntelliJ generate a stub for `Request::fromJSON`.
 
 ```kotlin
 class Request(command: String) {
@@ -137,9 +137,10 @@ that are not properties". Okay, let's make `command` a property.
 class Request(val command: String)
 ```
 
-Now our test fails with an ugly message: `expected:<...robotworlds.Request@[4de025bf]> but
-was:<...robotworlds.Request@[538613b3]>`. I suspect this is because`Request` doesn't have an `equals` implementation, so
-let's upgrade it to a `data class`, like we did with `CommandResult`.
+Now our test fails with an ugly
+message: `expected:<...robotworlds.Request@[4de025bf]> but was:<...robotworlds.Request@[538613b3]>`. I suspect this is
+because `Request` doesn't have an `equals` implementation, so let's upgrade it to a `data class`, like we did
+with `CommandResult`.
 
 ```kotlin
 @Serializable
@@ -241,8 +242,8 @@ fun receive(jsonMessage: String): String {
 ### A little refactoring
 
 In the previous article, we already had a suspicion that `World` would eventually need to be split up. Now that we have
-a `MessageReceiver` in place, it's becoming obvious that `World::handleRequest` is out of place. Remember, it's job is
-to take a request, execute the requested command, and return a result. Its responsibility is focused on request and
+a `MessageReceiver` in place, it's becoming obvious that `World::handleRequest` is out of place. Remember, its job is to
+take a request, execute the requested command, and return a result. Its responsibility is focused on request and
 response messages. I think the primary responsibility of `World` should be to handle game logic. It shouldn't need to
 worry about messages, and `MessageReceiver` seems like a much better place for that. So let's move `handleRequest`
 to `MessageReceiver`.
@@ -290,7 +291,7 @@ fun `invoke launch command with JSON message`() {
 
 These tests are basically the same, except that the test for `MessageReceiver` is using JSON, and the test for `World`
 is using a `Request` object. Now, we could do two things: We could move the test in `WorldTest` to `MessageReceiverTest`
-and change it, to it uses `MessageReceiver::handleRequest`, or we could just delete the test in `WorldTest`. Let's get
+and change it, so it uses `MessageReceiver::handleRequest`, or we could just delete the test in `WorldTest`. Let's get
 rid of this duplication by deleting the test in `WorldTest`.
 
 Tests still pass. Now that the duplicate test is gone, `World::handleRequest` is not used anywhere, so we can delete
@@ -372,7 +373,7 @@ fun `handles a command`() {
 
     Socket("127.0.0.1", port).use {
         it.getOutputStream().writer().write("""{ "command": "launch" }""")
-        val response = it.getInputStream().reader().useLines { lineSequence -> lineSequence.first() }
+        val response = it.getInputStream().bufferedReader().readLine()
 
         assertThat(response).isEqualTo("""{"result":"OK"}""")
     }
@@ -451,8 +452,8 @@ it.getOutputStream().writer().apply {
 }
 ```
 
-Te test still fails: `expected:<"{"result":"OK"}"> but was:<null>`.
-It looks like we also need to flush in `SocketListener`.
+Te test still fails: `expected:<"{"result":"OK"}"> but was:<null>`. It looks like we also need to flush
+in `SocketListener`.
 
 ```kotlin
 it.getOutputStream().writer().apply {
@@ -529,8 +530,8 @@ intuitive API's.
 
 This is why I keep as much logic as possible separated from the code that has to deal with these kinds of API's. That
 way, we maximize the amount of code that can easily be tested and understood. This is what's called the
-[Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern. Our `SocketListener` is a humble object. It's
-sole responsibilies are to accept connections, pass messages on to `MessageReceiver` and send the result back to the
+[Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern. Our `SocketListener` is a humble object. Its
+only responsibilies are to accept connections, pass messages on to `MessageReceiver` and send the result back to the
 client.
 
 ### YAGNI
