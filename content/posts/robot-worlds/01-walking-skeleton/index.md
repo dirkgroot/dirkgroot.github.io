@@ -17,7 +17,7 @@ that.
 I created this blog site 6 months ago, so I guess it's about time to actually start writing 🙄. Here goes nothing!
 
 [Geepaw Hill](https://www.geepawhill.org/series/robot-worlds/)
-and [Ron Jeffries](https://ronjeffries.com/categories/robot/) both started a(v|b)log series on a fun programming
+and [Ron Jeffries](https://ronjeffries.com/categories/robot/) both started a (v|b)log series on a fun programming
 exercise called Robot Worlds. From what I understand from these blogs, this exercise is part of an education offered
 by [WeThinkCode_](https://www.wethinkcode.co.za/), which helps young South Africans train their digital skills.
 
