@@ -174,7 +174,7 @@ class MessageReceiver(world: World) {
 }
 ```
 
-Implement it to make the test pass. For this, we'll have to make the constructor parameter `world` class member.
+Implement it to make the test pass. For this, we'll have to make the constructor parameter `world` a class member.
 
 ```kotlin
 class MessageReceiver(private val world: World) {
