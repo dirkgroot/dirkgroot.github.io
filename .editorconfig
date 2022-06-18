@@ -4,4 +4,4 @@ root = true
 max_line_length = 180
 
 [*.md]
-max_line_length = 80
+max_line_length = 120
