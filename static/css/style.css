@@ -8,3 +8,7 @@ summary {
     box-shadow: 0 0 10px 0 var(--tertiary);
     background-color: var(--code-bg);
 }
+
+.entry-content {
+    display: block !important;
+}
