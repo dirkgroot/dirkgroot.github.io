@@ -2,6 +2,7 @@
 title: "Robot Worlds 2: Communication"
 date: 2022-06-18T13:53:03Z
 draft: false
+series: [Robot Worlds]
 tags: [walking-skeleton, robot-worlds, kotlin, kotlin-serialization, tdd]
 ---
 {{< summary >}}

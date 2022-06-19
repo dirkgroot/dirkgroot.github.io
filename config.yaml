@@ -17,6 +17,10 @@ menu:
     name: Tags
     url: /tags/
     weight: 20
+  - identifier: series
+    name: Series
+    url: /series/
+    weight: 23
   - identifier: archives
     name: Archive
     url: /archives/
@@ -31,7 +35,8 @@ menu:
     weight: 30
 
 taxonomies:
-  tag: "tags"
+  tag: tags
+  series: series
 
 markup:
   highlight:
