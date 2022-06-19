@@ -1,12 +1,14 @@
 .dg-summary {
     font-style: italic;
-    padding-left: 1.5em;
-    padding-right: 1.5em;
+    padding-left: var(--content-gap);
+    padding-right: var(--content-gap);
+    margin-bottom: var(--content-gap);
 }
 
 .dg-figure-border img {
     box-shadow: 0 0 10px 0 var(--tertiary);
     background-color: var(--code-bg);
+    padding: calc(var(--gap) / 2);
 }
 
 .dg-extended-footer {
