@@ -1,3 +1,7 @@
+.post-content h2 {
+    border-bottom: 1px solid var(--tertiary);
+}
+
 :root {
     --dg-footer-height: 60px;
 }
