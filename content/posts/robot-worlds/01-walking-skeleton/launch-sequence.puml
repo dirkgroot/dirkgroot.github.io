@@ -6,6 +6,11 @@ footer Sequence diagram
 skinparam backgroundColor transparent
 autonumber
 
+actor Player
+participant Client
+participant Server
+participant World
+
 Player -> Client: Launch robot (via UI)
 Client -> Server: {"command": "launch"} (via TCP)
 Server -> World: launchRobot()
