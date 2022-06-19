@@ -1,0 +1,13 @@
+:root {
+    --dg-footer-height: 60px;
+}
+
+/* Include extended footer hight in min-height calculation of main area */
+.main {
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--dg-footer-height));
+}
+
+/* Don't limit post summary to two lines on home page */
+.entry-content {
+    display: block;
+}

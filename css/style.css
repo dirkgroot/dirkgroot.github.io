@@ -1,14 +1,15 @@
-summary {
+.dg-summary {
     font-style: italic;
     padding-left: 1.5em;
     padding-right: 1.5em;
 }
 
-.figure-border img {
+.dg-figure-border img {
     box-shadow: 0 0 10px 0 var(--tertiary);
     background-color: var(--code-bg);
 }
 
-.entry-content {
-    display: block !important;
+.dg-extended-footer {
+    text-align: center;
+    height: var(--dg-footer-height);
 }
