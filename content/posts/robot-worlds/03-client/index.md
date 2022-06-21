@@ -6,7 +6,7 @@ series: [Robot Worlds]
 tags: [walking-skeleton, robot-worlds, kotlin, tdd, refactoring]
 ---
 {{< summary >}}
-Now that we have a server that can receive a request over TCP, handle it and send a response back, it looks like good
+Now that we have a server that can receive a request over TCP, handle it and send a response back, it looks like a good
 time to start working on the client. We'll also think about how we want to test our walking skeleton end-to-end.
 {{< /summary >}}
 
