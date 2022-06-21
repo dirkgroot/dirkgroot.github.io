@@ -355,6 +355,8 @@ results in the elimination of duplication and all the risks that come with it.
 Let's see if we can finish our walking skeleton next time, so we can start building some real end-to-end features.
 Thanks for reading, see you next time!
 
+PS: Here's the source code so far: https://github.com/dirkgroot/robot-worlds
+
 [^1]: Or mocks, as most people call them. In reality, a mock is only one of many kinds of test doubles. Take a look at
 the [Test Double patterns](http://xunitpatterns.com/Test%20Double%20Patterns.html) on <http://xunitpatterns.com> if you
 want to know more about the terminology around test doubles.
