@@ -36,7 +36,7 @@ out [Hill's GitHub repository](https://github.com/GeePawHill/robot-worlds/tree/m
 
 The _container diagram_[^1] below shows my current understanding of the architecture of the game.
 
-{{< figure src="container.svg" class="dg-figure-border" >}}
+{{< figure src="container.svg" class="dg-figure-border dg-figure-padding" >}}
 
 ## Walking skeleton
 
@@ -115,7 +115,7 @@ kind of user interface, and the client needs to send commands to the server over
 Let's start from the bottom of the call stack, and step by step work our way upwards. What do I mean by this? This
 sequence diagram is a rough sketch of the call stack I currently have in mind.
 
-{{< figure src="launch-sequence.svg" class="dg-figure-border" >}}
+{{< figure src="launch-sequence.svg" class="dg-figure-border dg-figure-padding" >}}
 
 Just rotate your screen 90 degrees clockwise, and you'll see what I mean. The top of the call stack is where everything
 starts: the `Player`. With every arrow we dive a level deeper into the call stack, until we arrive at `World`. So the

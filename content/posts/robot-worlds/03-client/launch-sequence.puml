@@ -1,0 +1,21 @@
+@startuml
+
+title Launch command
+footer Sequence diagram
+
+skinparam backgroundColor transparent
+autonumber
+
+actor Player
+participant Client
+participant Server #008000c0
+participant World #008000c0
+
+Player -> Client: Launch robot (via UI)
+Client -[#green]> Server: <font color=008000c0><b>{"command": "launch"} (via TCP)
+Server -[#green]> World: <font color=008000c0><b>launchRobot()
+Server <-[#green]- World: <font color=008000c0><b>OK
+Client <-[#green]- Server: <font color=008000c0><b>{"result": "OK"} (via TCP)
+Player <-- Client: "OK" (via UI)
+
+@enduml
