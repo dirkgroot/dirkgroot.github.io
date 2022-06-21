@@ -8,6 +8,9 @@
 .dg-figure-border img {
     box-shadow: 0 0 10px 0 var(--tertiary);
     background-color: var(--code-bg);
+}
+
+.dg-figure-padding img {
     padding: calc(var(--gap) / 2);
 }
 
