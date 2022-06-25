@@ -3,7 +3,7 @@ title: "Robot Worlds 4: End to end"
 date: 2022-06-25T16:20:22Z
 draft: false
 series: [Robot Worlds]
-tags: [walking-skeleton, robot-worlds, kotlin, tdd]
+tags: [walking-skeleton, robot-worlds, kotlin, tdd, yagni]
 ---
 {{< summary >}}
 I feel like we're almost done with our walking skeleton. Today, I'll try to finish it.

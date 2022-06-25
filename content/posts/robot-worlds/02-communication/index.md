@@ -3,7 +3,7 @@ title: "Robot Worlds 2: Communication"
 date: 2022-06-18T13:53:03Z
 draft: false
 series: [Robot Worlds]
-tags: [walking-skeleton, robot-worlds, kotlin, kotlin-serialization, tdd]
+tags: [walking-skeleton, robot-worlds, kotlin, kotlin-serialization, tdd, yagni]
 ---
 {{< summary >}}
 Our walking skeleton is no more than an undead skull at the moment. Some more bones need to be added to make it a fully
