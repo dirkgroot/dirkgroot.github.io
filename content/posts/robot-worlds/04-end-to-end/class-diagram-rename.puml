@@ -1,0 +1,23 @@
+@startuml
+
+title Robot Worlds design
+footer Class diagram
+
+skinparam backgroundColor transparent
+
+class MessageReceiver {
+    receive(jsonMessage: String)
+}
+
+class RequestMessage {
+    command: String
+}
+
+class ResponseMessage {
+    result: String
+}
+
+MessageReceiver ..> RequestMessage
+MessageReceiver ..> ResponseMessage
+
+@enduml
