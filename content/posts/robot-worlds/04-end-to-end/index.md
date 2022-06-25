@@ -135,7 +135,7 @@ class RequestMessageTest {
 }
 ```
 
-We already know how to do this, so let's make it compile en make it pass in one go.
+We already know how to do this, so let's make it compile and make it pass in one go.
 
 ```kotlin
 data class RequestMessage(val command: String) {
@@ -198,9 +198,9 @@ a `main` function for that. Second, I think we're missing a "major component": T
 ### The world through the robot's eyes
 
 We already have a `World` class in the `server` package. This class represents the world, as seen by the server. It
-contains all information of the entire map (obstacles, pits, mines) and knows where all robots are and what they are
-doing. However, from the spec we know that the robot has a very limited view of the world. It gathers information by
-moving around and scanning its surroundings.
+contains (or rather: will contain) all information of the entire map (obstacles, pits, mines) and knows (ehm, will know)
+where all robots are and what they are doing. However, from the spec we know that the robot has a very limited view of
+the world. It gathers information by moving around and scanning its surroundings.
 
 Do I want this to be in the walking skeleton? Do we need it to start working on the first feature? I'm tempted to say
 yes, but in all honesty I don't think we need it right now. Sure, `Robot` using `SocketClient` directly is something we
@@ -310,8 +310,8 @@ I think this is a good time for a retrospective.
 
 We started by observing that the terminology we used in the code didn't fully match the terminology which is used in the
 spec. We fixed this by renaming two classes. I think it's important to make sure that the terminology used in the code
-matches the terminology of the problem domain. This makes it makes it easier to understand code, because we don't need
-to translate between different sets of terminology.
+matches the terminology of the problem domain. This makes it easier to understand code, because we don't need to
+translate between different sets of terminology.
 The [Domain-Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) method makes this very explicit by
 striving for a "ubiquitous language", a language shared by everyone involved in the project, from end users to software
 developers.
@@ -320,7 +320,7 @@ developers.
 
 I forgot to apply the YAGNI principle when implementing the `Robot::launch` method. Instead of writing just enough code
 to make the test pass, I added a line of code I knew I was going to need. It wasn't a big deal, and it was fixed easily,
-but it's still.
+but it's still food for thought.
 
 I think this little example is a nice showcase of why the YAGNI principle is so powerful. By making sure every line of
 production code we add is "justified" by a failing test, we don't just achieve high line and branch coverage. We also
