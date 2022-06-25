@@ -29,7 +29,7 @@ string back as a reply.
 Before we move on, let's look at the terminology we're using. I'm seeing an inconsistency I'd like to address. Making a
 little diagram like this often helps to make these kinds of inconsistencies obvious. From this diagram, it's quite
 obvious that we're using four words, without making it obvious how these words are related to each other: _message_,
-_request_, _command_ and _result_. I'd like to settle on one word.
+_request_, _command_ and _result_.
 
 All of these words are actually used in the protocol specification. In my words, the spec says that the client sends a
 _request_ _message_ containing a _command_, and the server replies with a response _message_, containing a _result_.
