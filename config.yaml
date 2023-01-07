@@ -80,6 +80,8 @@ params:
       url: "https://www.linkedin.com/in/dirkgroot77"
     - name: twitter
       url: "https://twitter.com/dirk__groot"
+    - name: mastodon
+      url: "https://mstdn.social/@dirkgroot"
 
 outputs:
   home:
