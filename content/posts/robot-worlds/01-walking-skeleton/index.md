@@ -1,6 +1,7 @@
 ---
 title: "Robot Worlds 1: Walking Skeleton"
 date: 2022-06-14T20:14:13Z
+expiryDate: 2024-06-15T00:00:00Z
 draft: false
 series: [Robot Worlds]
 tags: [walking-skeleton, robot-worlds, kotlin, tdd]

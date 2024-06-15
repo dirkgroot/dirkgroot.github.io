@@ -1,6 +1,7 @@
 ---
 title: "Robot Worlds 3: Client"
 date: 2022-06-21T20:40:34Z
+expiryDate: 2024-06-15T00:00:00Z
 draft: false
 series: [Robot Worlds]
 tags: [walking-skeleton, robot-worlds, kotlin, tdd, refactoring]

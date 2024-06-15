@@ -1,6 +1,7 @@
 ---
 title: "Robot Worlds 4: End to end"
 date: 2022-06-25T16:20:22Z
+expiryDate: 2024-06-15T00:00:00Z
 draft: false
 series: [Robot Worlds]
 tags: [walking-skeleton, robot-worlds, kotlin, tdd, yagni]
