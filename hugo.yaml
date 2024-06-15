@@ -72,16 +72,15 @@ params:
     Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment 
              to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about) 
              if you want to know more about me.
+    AlignSocialIconsTo: "center"
 
   socialIcons:
     - name: github
       url: "https://github.com/dirkgroot"
     - name: linkedin
       url: "https://www.linkedin.com/in/dirkgroot77"
-    - name: twitter
-      url: "https://twitter.com/dirk__groot"
-    - name: mastodon
-      url: "https://mstdn.social/@dirkgroot"
+    - name: x
+      url: "https://x.com/dirk__groot"
 
 outputs:
   home:
