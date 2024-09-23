@@ -1,0 +1,75 @@
+==================================================================
+https://keybase.io/dirkgroot
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://blog.dirkgroot.nl
+  * I am dirkgroot (https://keybase.io/dirkgroot) on keybase.
+  * I have a public key with fingerprint EDE2 E319 9709 33F3 4317  9CD1 169B 04B8 D3B4 0611
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "0120de311a53bf89fdd1293456d9a825d3658bd43eb7777c2fd78cd90cea1ada7ac40a",
+      "fingerprint": "ede2e319970933f343179cd1169b04b8d3b40611",
+      "host": "keybase.io",
+      "key_id": "169b04b8d3b40611",
+      "kid": "0101517b172060b08d722d127c6d75ae6d7cd078019a249a5e77a16390e9b8cd23680a",
+      "uid": "e44fd185814dc639628340c13955ad19",
+      "username": "dirkgroot"
+    },
+    "service": {
+      "hostname": "blog.dirkgroot.nl",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1727071132,
+  "expire_in": 157680000,
+  "prev": "605143b7e1a0975dd51c4a9f513e3be58b7601f1b3d80eff29589df0e5bb9628",
+  "seqno": 28,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.13
+Comment: https://keybase.io/crypto
+
+yMN3AnicbZJtUFRVHMZ5B0kSqYhEA65fRInuuS97711LcBuCSQaxZnK0Yrn3nnPX
+6y57aXdBXkIaKgWbYdZhrAwhBRFpwAFCxTGMl14WBZuxYJVYHQOyVhoDdbSJl84y
+2qfOh3PnnPP7P+d5/vd8GxHoF+4fXRvU/VNXyEr/S331BX7KTOCRUkLSYDGhLyXM
+aOmDLBDZHUazCgk9QQKKhIgGQGRpSeEFBUJACTTD6qAg8hQLaR3LS5ChkcThIVMK
+5HgZCqSMRCBCkRNlhhSJJEJRrSZky7epVgeWRRBRWFUQOFKgaYVmaMAJMgRAJ0gk
+I/GQlhhSBwAu3KXZfRXYnCTaUbKq4T28MC7Z+x/+sW8SsICTAEeROlIiechRFLbO
+yTrIsSLCswxJjieBIFKMILKI40SgowUSCRIOQNE6fsl3wZIcYhgFAp7lAQNlTOko
+nmZIGdACy4oQCD7QjmxWMQ9hGqo2s8mmaQ6iLInA24WqjHyd9UV5hEgWzZT8H5ds
+tWCFfJvm0GTNgo93ORz5dr2v3FGc7+P3IMn4SMkoqVaIu4krCpHNrmpWQg8wKTtU
+nzROzJEcADSVRKCifNWGjKqPYDmcCA/fPagQS+pIFjC0xCEgkgLHQsgCmREFhQU0
+oiWEfyunI4ECJBryJFIUSmB5ASokYiXJ1wDCl+1dq0boKR77FE1Y066arKKjwIaI
+sv6+t4P8/MP9QoIDfM/ML3xZ5OPHx0evWDTQ5QF/ljifGafcyfEnhehT4Gzoz9Kt
+qoS5j1e7BwbvlcINJW0n658M8Db/+k2ywdI0/V75gd/di55jEwvfBZUaql6e4u3i
+iamFZVnTaeP/uKnL/eSr3nfcua67cRf/cNw5vLHz++azu8XeD3p3HmyvS5no3Zlx
+8IZ5S9VWb+sbPaP961qjOp/qBsfnu450pjbFRfc3TO51j1744S3qaMzYZ5+WDT+d
+kJGjhuw/l5N+KCGTuzB0v2Qw4/Pq2cTittgfY/J2XN1/ZcOAvv1a4s2tYGgP6BNC
+Q5tWeQYuNVYcTvCu2LfuJuh2HQ1ontvo+mvq/NBsYsd8XvovXzf0PDRnbqqprj2d
+ML0l3JM+38h1rO/YtgBCxl+y/PbhwOnmzbMjE96svtSW+qs1MdlPGPl4tmlNqPmy
+ISsqIiyK6TzxnCVt6pOcsKKG7WPq8lNdIU3bv3rlzN7I+fMlHWsdi4PV3jt1psYD
+ntViSGaPfMN1pnZVYE7u9Kj5dmTmIXImaLHYsG3oC+d6e8eVe7eeP1fzorMq25Vy
+ra1t5MGxmTHv3w2bhiKcYT2VxrUVEWl++fed7OSDWLl6JqJx+NnKN9NbDTW7w+Pv
+3tZ6hq+//oIzuOX9THrWM7yjvKLBc7Ft35fu3Nca+upcKxNHUuKWZ08uBB6//lFv
+e2rl5vrYNWNzrqHI4KLm5omWoIf/AuaJzjc=
+=X8hx
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/dirkgroot
+
+==================================================================
