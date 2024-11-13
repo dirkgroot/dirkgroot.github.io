@@ -41,7 +41,7 @@ taxonomies:
 markup:
   highlight:
     codeFences: true
-    style: api
+    style: xcode-dark
 
 params:
   author: "Dirk Groot"
@@ -49,7 +49,7 @@ params:
   description: "Software architect"
   keywords: [blog, developer, personal]
   gravatar: dirkgroot77@gmail.com
-  defaultTheme: light
+  defaultTheme: dark
   disableThemeToggle: true
   ShowReadingTime: true
   ShowShareButtons: false
