@@ -2,7 +2,6 @@ baseURL: https://dirkgroot.nl
 languageCode: en-us
 title: Dirk Groot
 theme: PaperMod
-paginate: 5
 googleAnalytics: G-TBE6V39YXJ
 enableRobotsTXT: true
 enableEmoji: true
