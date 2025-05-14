@@ -48,7 +48,7 @@ params:
   description: "Software architect"
   keywords: [blog, developer, personal]
   gravatar: dirkgroot77@gmail.com
-  defaultTheme: dark
+  defaultTheme: light
   disableThemeToggle: true
   ShowReadingTime: true
   ShowShareButtons: false
