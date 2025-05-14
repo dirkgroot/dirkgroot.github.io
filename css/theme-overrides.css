@@ -1,18 +1,20 @@
+:root {
+    --main-width: 1024px;
+
+    --dg-footer-height: 60px;
+}
+
 .post-content h2 {
     border-bottom: 1px solid var(--tertiary);
 }
 
-:root {
-    --dg-footer-height: 60px;
-}
-
-/* Include extended footer hight in min-height calculation of main area */
 .main {
+    /* Include extended footer hight in min-height calculation of main area */
     min-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--dg-footer-height));
 }
 
-/* Don't limit post summary to two lines on home page */
 .entry-content {
+    /* Don't limit post summary to two lines on home page */
     display: block;
 }
 
