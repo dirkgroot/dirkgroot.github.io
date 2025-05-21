@@ -1,0 +1,9 @@
+graph TD
+    type_code(Make change) --> submit_mr(Submit or update PR)
+    submit_mr ==>|Pipeline fails| type_code
+    submit_mr -->|Pipeline passes| review_mr(Wait for review)
+    review_mr ==>|Changes needed| type_code
+    review_mr -->|Approved, so merge| manual_test(Wait for manual test)
+    manual_test -->|Pass| done(Done)
+    manual_test ==>|Fail| type_code
+    linkStyle 1,3,6 stroke: #0085FF, stroke-width: 5px
