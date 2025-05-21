@@ -1,7 +1,106 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Java on Dirk Groot</title><link>https://dirkgroot.nl/tags/java/</link><description>Recent content in Java on Dirk Groot</description><image><title>Dirk Groot</title><url>https://dirkgroot.nl/dirkgroot.png</url><link>https://dirkgroot.nl/dirkgroot.png</link></image><generator>Hugo -- 0.147.4</generator><language>en-us</language><lastBuildDate>Wed, 21 May 2025 06:12:50 +0000</lastBuildDate><atom:link href="https://dirkgroot.nl/tags/java/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing with types #01: Introduction</title><link>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</link><pubDate>Wed, 21 May 2025 06:12:50 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</guid><description>&lt;summary class="dg-summary">
-&lt;p>Ever had that sinking feeling when a bug sneaks into production, despite all your testing efforts? Yeah, we&amp;rsquo;ve all been
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Java on Dirk Groot</title><link>https://dirkgroot.nl/tags/java/</link><description>Recent content in Java on Dirk Groot</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 21 May 2025 06:12:50 +0000</lastBuildDate><atom:link href="https://dirkgroot.nl/tags/java/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing with types #01: Introduction</title><link>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</link><pubDate>Wed, 21 May 2025 06:12:50 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</guid><content>&lt;summary class="dg-summary">
+ &lt;p>Ever had that sinking feeling when a bug sneaks into production, despite all your testing efforts? Yeah, we&amp;rsquo;ve all been
 there! While languages like Java, C#, and Kotlin come with powerful type systems, many developers aren&amp;rsquo;t using them to
 their full potential.&lt;/p>
 &lt;p>In this series, we&amp;rsquo;ll explore how we can use types to catch bugs before they even have a chance to become bugs. We&amp;rsquo;ll
 look at practical ways to make our designs safer and easier to understand.&lt;/p>
-&lt;/summary></description></item></channel></rss>
+
+&lt;/summary>
+
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>This is the first part of a series of articles I&amp;rsquo;m writing about designing with types. In the first two articles we&amp;rsquo;ll
+set the stage. In subsequent articles we&amp;rsquo;ll explore some practical ways of using types make our code safer and easier to
+understand.&lt;/p>
+&lt;h2 id="feedback-loops">Feedback loops&lt;/h2>
+&lt;p>Before we dive in, let&amp;rsquo;s consider why this is relevant. While developing software, we are constantly faced with feedback
+loops. The diagram below shows a simplified version of a typical development process.&lt;/p>
+&lt;figure class="dg-figure-border dg-figure-padding">
+ &lt;img loading="lazy" src="feedback-loops.svg" width="400px"/> 
+&lt;/figure>
+
+&lt;p>This diagram shows three types of feedback we could get after we make a change. The build pipeline could fail, a code
+reviewer could give valuable feedback, or someone could find a bug while manually testing the change.&lt;/p>
+&lt;p>From this small example, we can easily see that we&amp;rsquo;re more productive when we have short feedback loops. Solving the
+bugs we inevitably introduce takes longer when more steps are between making the change and receiving feedback. If
+receiving feedback takes a long time, we&amp;rsquo;ll go do something else in the meantime. This causes context switching which,
+as we know, is a big productivity killer.&lt;/p>
+&lt;h3 id="finding-bugs">Finding bugs&lt;/h3>
+&lt;p>Development processes like the one shown above typically have multiple ways of finding bugs after they have been
+introduced. For example:&lt;/p>
+&lt;ul>
+&lt;li>Code review&lt;/li>
+&lt;li>Automated tests&lt;/li>
+&lt;li>Manual / exploratory tests&lt;/li>
+&lt;li>Acceptance test&lt;/li>
+&lt;li>Collect end user feedback&lt;/li>
+&lt;li>etc&amp;hellip;&lt;/li>
+&lt;/ul>
+&lt;p>We need to do stuff like this. If you&amp;rsquo;re doing all this, good job!&lt;/p>
+&lt;figure>
+ &lt;img loading="lazy" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmxsNHRmd2lkODFvbnhtcjBhdzdyaXMwbTcweGd3bzdpZjN5d2htMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mGK1g88HZRa2FlKGbz/giphy.gif" width="200px"/> 
+&lt;/figure>
+
+&lt;h3 id="preventing-bugs">Preventing bugs&lt;/h3>
+&lt;p>There are also multiple ways to prevent bugs from occurring in the first place, for example:&lt;/p>
+&lt;ul>
+&lt;li>Backlog refinement&lt;/li>
+&lt;li>Developing in small, safe steps&lt;/li>
+&lt;li>Test-Driven Development&lt;/li>
+&lt;li>🎇 &lt;strong>Design&lt;/strong> 🎇&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Design&lt;/strong> is what this series is about. We&amp;rsquo;ll explore several ways of using carefully designed types to &lt;strong>make
+illegal states unrepresentable&lt;/strong>&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>. Code that introduces an illegal state should not compile.&lt;/p>
+&lt;figure>
+ &lt;img loading="lazy" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHU0bTZianlqZWJ3NjFzNXFvNTI3bHFodXhzZjUwaDFqajZlMjZsdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26ufdipQqU2lhNA4g/giphy.gif" width="200px"/> 
+&lt;/figure>
+
+&lt;h2 id="design">Design&lt;/h2>
+&lt;h3 id="strategy">Strategy&lt;/h3>
+&lt;p>As shown before, we typically spend a lot of time and effort on finding bugs in our software. This is a good thing.
+Mistakes will always be made and cannot be 100% prevented, not even by the techniques we&amp;rsquo;ll be exploring in this series.
+However, from what I&amp;rsquo;ve seen &amp;ldquo;in the wild&amp;rdquo;, I do think we tend to miss a lot of opportunities to design our software in
+ways that &lt;strong>prevent&lt;/strong> bugs from being introduced.&lt;/p>
+&lt;p>The overall strategy we&amp;rsquo;ll be exploring is to prevent bugs by carefully designing a &lt;strong>domain model&lt;/strong>. This domain model
+implements business rules and should be considered an &lt;strong>API&lt;/strong> that is used by our application logic. The domain model
+should consist of carefully designed types that make it impossible to build application logic that introduces illegal
+states in our application. Ideally, mistakes in our application logic are found by the compiler.&lt;/p>
+&lt;h3 id="design-goals">Design goals&lt;/h3>
+&lt;p>In short, the design goals for our domain model are to create an API that:&lt;/p>
+&lt;ul>
+&lt;li>is &lt;strong>safe&lt;/strong> to use&lt;/li>
+&lt;li>reveals &lt;strong>intent&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;h4 id="safety">Safety&lt;/h4>
+&lt;p>One common cause of bugs is misusing the API of the domain model. Some examples are:&lt;/p>
+&lt;ul>
+&lt;li>Assigning invalid values to properties&lt;/li>
+&lt;li>Changing a property of an entity while not allowed&lt;/li>
+&lt;li>Changing the &amp;ldquo;workflow&amp;rdquo; status of an entity while not allowed&lt;/li>
+&lt;li>Calling functions while not allowed&lt;/li>
+&lt;li>Having functions without proper input validation and calling them with invalid parameter values&lt;/li>
+&lt;/ul>
+&lt;p>All of this can and &lt;strong>will&lt;/strong> happen, when the API&amp;rsquo;s we design allow for such mistakes to be made.&lt;/p>
+&lt;p>So what do I mean when I say we should design APIs that are safe to use? It means we should aim to design API&amp;rsquo;s that can
+be used without having to wonder whether they are safe to use in a particular situation. To achieve this, we should
+prefer compile time validation over runtime validation. When you use an API in an invalid way, the code should not
+compile.&lt;/p>
+&lt;h4 id="revealing-intent">Revealing intent&lt;/h4>
+&lt;p>Problems like the ones mentioned above also tend to happen when developers misunderstand the intended purpose of APIs.
+An obvious reason for this is lack of proper naming. For example, &lt;code>completeOrder&lt;/code> reveals a lot more intent than
+&lt;code>setStatus&lt;/code>.&lt;/p>
+&lt;p>Another, more subtle, naming problem is that we tend to just not name things. We&amp;rsquo;ll be looking at several examples of
+this in subsequent articles. As a preparatory exercise, you can look at the code you&amp;rsquo;re working on and see if you can
+find concepts that are implemented, but not explicitly named.&lt;/p>
+&lt;p>As you will see, safety and revealing intent often go hand in hand. When we improve the safety of your code, we will
+likely also make the code easier to understand and vice versa.&lt;/p>
+&lt;h2 id="next-up">Next up&lt;/h2>
+&lt;p>In the next article we&amp;rsquo;ll do some more setting the stage by reviewing some commonly seen code. In subsequent articles
+we&amp;rsquo;ll explore ways of improving the safety and readability of our code.&lt;/p>
+&lt;div class="footnotes" role="doc-endnotes">
+&lt;hr>
+&lt;ol>
+&lt;li id="fn:1">
+&lt;p>This phrase was coined by &lt;a href="https://blog.janestreet.com/effective-ml-revisited/">Yaron Minsky&lt;/a>&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;/div></content></item></channel></rss>
