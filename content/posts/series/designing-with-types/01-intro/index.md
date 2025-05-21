@@ -1,6 +1,6 @@
 ---
 title: "Designing with types #01: Introduction"
-date: 2025-05-21T06:12:50Z
+date: 2025-05-21T11:25:41Z
 tags: [ design, "type safety", java ]
 series: "Designing with Types"
 cover:
