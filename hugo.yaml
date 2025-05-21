@@ -8,30 +8,30 @@ enableEmoji: true
 
 menu:
   main:
-  - identifier: blog
-    name: Blog
-    url: /
-    weight: 10
-  - identifier: tags
-    name: Tags
-    url: /tags/
-    weight: 20
-  - identifier: series
-    name: Series
-    url: /series/
-    weight: 23
-  - identifier: archives
-    name: Archive
-    url: /archives/
-    weight: 25
-  - identifier: search
-    name: Search
-    url: /search/
-    weight: 27
-  - identifier: about
-    name: About me
-    url: /about/
-    weight: 30
+    - identifier: blog
+      name: Blog
+      url: /
+      weight: 10
+    - identifier: tags
+      name: Tags
+      url: /tags/
+      weight: 20
+    - identifier: series
+      name: Series
+      url: /series/
+      weight: 23
+    - identifier: archives
+      name: Archive
+      url: /archives/
+      weight: 25
+    - identifier: search
+      name: Search
+      url: /search/
+      weight: 27
+    - identifier: about
+      name: About me
+      url: /about/
+      weight: 30
 
 taxonomies:
   tag: tags
@@ -46,7 +46,7 @@ params:
   author: "Dirk Groot"
   info: "Software architect"
   description: "Software architect"
-  keywords: [blog, developer, personal]
+  keywords: [ blog, developer, personal ]
   gravatar: dirkgroot77@gmail.com
   defaultTheme: light
   disableThemeToggle: true
@@ -62,15 +62,17 @@ params:
   hideSummary: false
   showtoc: true
   tocopen: false
+  images: [ dirkgroot.jpg ]
+  env: production
 
   assets:
     disableHLJS: true
 
   homeInfoParams:
     Title: Welcome!
-    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment 
-             to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about) 
-             if you want to know more about me.
+    Content: I love programming, and I love to share the adventures I'm having with it. This site is an experiment
+      to see if I have enough inspiration to write about it somewhat regularly. Take a look at [About me](/about)
+      if you want to know more about me.
     AlignSocialIconsTo: "center"
 
   socialIcons:
