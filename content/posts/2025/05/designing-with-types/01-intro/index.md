@@ -1,6 +1,6 @@
 ---
 title: "Designing with types #01: Introduction"
-date: 2025-05-20T07:44:43Z
+date: 2025-05-21T06:12:50Z
 draft: true
 tags: [ design, "type safety", java ]
 series: "Designing with Types"
@@ -9,8 +9,8 @@ series: "Designing with Types"
 {{< summary >}}
 
 Ever had that sinking feeling when a bug sneaks into production, despite all your testing efforts? Yeah, we've all been
-there! While modern languages like Java, C#, and Kotlin come with powerful type systems, many developers aren't using
-them to their full potential.
+there! While languages like Java, C#, and Kotlin come with powerful type systems, many developers aren't using them to
+their full potential.
 
 In this series, we'll explore how we can use types to catch bugs before they even have a chance to become bugs. We'll
 look at practical ways to make our designs safer and easier to understand.
@@ -32,7 +32,7 @@ loops. The diagram below shows a simplified version of a typical development pro
 
 {{< figure src="feedback-loops.svg" class="dg-figure-border dg-figure-padding" width="400px" >}}
 
-This diagram shows 3 types of feedback we could get after we make a change. The build pipeline could fail, a code
+This diagram shows three types of feedback we could get after we make a change. The build pipeline could fail, a code
 reviewer could give valuable feedback, or someone could find a bug while manually testing the change.
 
 From this small example, we can easily see that we're more productive when we have short feedback loops. Solving the
@@ -78,10 +78,10 @@ width="200px" >}}
 
 ### Strategy
 
-As shown before, we typically spend a lot of time and effort in finding bugs in our software. This is a good thing.
-Mistakes will always be made and cannot be 100% prevented, not even by the techniques we'll be exploring. However, from
-what I've seen "in the wild", I do think we tend to miss a lot of opportunities to design our software in ways that
-**prevent** bugs from being introduced.
+As shown before, we typically spend a lot of time and effort on finding bugs in our software. This is a good thing.
+Mistakes will always be made and cannot be 100% prevented, not even by the techniques we'll be exploring in this series.
+However, from what I've seen "in the wild", I do think we tend to miss a lot of opportunities to design our software in
+ways that **prevent** bugs from being introduced.
 
 The overall strategy we'll be exploring is to prevent bugs by carefully designing a **domain model**. This domain model
 implements business rules and should be considered an **API** that is used by our application logic. The domain model
