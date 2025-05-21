@@ -62,7 +62,7 @@ params:
   hideSummary: false
   showtoc: true
   tocopen: false
-  images: [ dirkgroot.jpg ]
+  images: [ dirkgroot.png ]
   env: production
 
   assets:
