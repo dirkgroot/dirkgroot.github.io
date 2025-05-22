@@ -4,7 +4,7 @@ date: 2025-05-21T11:25:41Z
 tags: [ design, "type safety", java ]
 series: "Designing with Types"
 cover:
-  image: "/posts/series/designing-with-types/cover.png"
+  image: "cover.png"
 ---
 
 {{< summary >}}
