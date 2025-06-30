@@ -1,4 +1,322 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Designing With Types on Dirk Groot</title><link>https://dirkgroot.nl/series/designing-with-types/</link><description>Recent content in Designing With Types on Dirk Groot</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 21 May 2025 11:25:41 +0000</lastBuildDate><atom:link href="https://dirkgroot.nl/series/designing-with-types/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing with types #01: Introduction</title><link>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</link><pubDate>Wed, 21 May 2025 11:25:41 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</guid><content>&lt;summary class="dg-summary">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Designing With Types on Dirk Groot</title><link>https://dirkgroot.nl/series/designing-with-types/</link><description>Recent content in Designing With Types on Dirk Groot</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Mon, 30 Jun 2025 09:02:40 +0000</lastBuildDate><atom:link href="https://dirkgroot.nl/series/designing-with-types/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing with types #02: Pitfalls and Practices</title><link>https://dirkgroot.nl/posts/series/designing-with-types/02-pitfalls-and-practices/</link><pubDate>Mon, 30 Jun 2025 09:02:40 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/02-pitfalls-and-practices/</guid><content>&lt;summary class="dg-summary">
+ In this installment of my Designing with Types series, we&amp;rsquo;ll look at how some typical backend code is set up. We&amp;rsquo;ll
+identify some common pitfalls and identify best practices to avoid these pitfalls.
+&lt;/summary>
+
+&lt;h2 id="architecture">Architecture&lt;/h2>
+&lt;p>Regardless of what architecture style we use, an application almost always consists of three basic tiers or layers:
+&lt;em>Presentation&lt;/em>, &lt;em>Business&lt;/em> and &lt;em>Infrastructure&lt;/em>. Here&amp;rsquo;s a diagram that shows two architecture styles using these three
+layers.&lt;/p>
+&lt;figure class="dg-figure-border dg-figure-padding">
+ &lt;img loading="lazy" src="architecture.svg" width="700px"/> 
+&lt;/figure>
+
+&lt;p>In the &lt;a href="https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)">Hexagonal Architecture&lt;/a>, the &lt;em>Business&lt;/em> layer
+defines ports. The &lt;em>Presentation&lt;/em> and &lt;em>Infrastructure&lt;/em> layer contain adapters that interact with the web framework and
+the persistence framework.
+The &lt;a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion Principle&lt;/a> (DIP) is used to make
+the &lt;em>Business&lt;/em> layer easy to test, because infrastructure-dependent code can easily be replaced
+by &lt;a href="https://en.wikipedia.org/wiki/Test_double">test doubles&lt;/a>.&lt;/p>
+&lt;p>In the classic &lt;a href="https://en.wikipedia.org/wiki/Multitier_architecture">N-Tier Architecture&lt;/a>, the responsibilities of the
+layers are the same, only the dependency rules are different from the Hexagonal Architecture.&lt;/p>
+&lt;p>Let&amp;rsquo;s look at some examples of code we often encounter in these three layers.&lt;/p>
+&lt;h3 id="infrastructure">Infrastructure&lt;/h3>
+&lt;p>As mentioned in the diagram above, this is the layer where database communication usually happens. It&amp;rsquo;s also commonly
+known as the &lt;em>Data Access&lt;/em> or &lt;em>Persistence&lt;/em> layer. I&amp;rsquo;m calling it &lt;em>Infrastructure&lt;/em> because it can be used for more than
+just persistence.&lt;/p>
+&lt;p>When used for data access, this layer usually consists of database entities and repositories. Here&amp;rsquo;s an example in
+Kotlin, using JPA annotations for object-relational mapping (ORM) and Spring Data&amp;rsquo;s &lt;code>CrudRepository&lt;/code> to generate a
+repository implementation:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>@Entity
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoList&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @Id &lt;span style="color:#fc5fa3">val&lt;/span> id: UUID,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> name: String
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @OneToMany(mappedBy = &lt;span style="color:#fc6a5d">&amp;#34;todoList&amp;#34;&lt;/span>, cascade = [&lt;span style="color:#5dd8ff">CascadeType&lt;/span>.ALL])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> items: MutableList&amp;lt;TodoItem&amp;gt; = mutableListOf()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>@Entity
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoItem&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @Id &lt;span style="color:#fc5fa3">val&lt;/span> id: UUID,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @ManyToOne
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @JoinColumn(name = &lt;span style="color:#fc6a5d">&amp;#34;todolist_id&amp;#34;&lt;/span>, nullable = &lt;span style="color:#fc5fa3">false&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoList: TodoList,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> title: String,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> dueDate: LocalDateTime? = &lt;span style="color:#fc5fa3">null&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> done: Boolean = &lt;span style="color:#fc5fa3">false&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>@Repository
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">interface&lt;/span> &lt;span style="color:#5dd8ff">TodoListRepository&lt;/span> : CrudRepository&amp;lt;TodoList, UUID&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>@Repository
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">interface&lt;/span> &lt;span style="color:#5dd8ff">TodoItemRepository&lt;/span> : CrudRepository&amp;lt;TodoItem, UUID&amp;gt; {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">findByTodoListId&lt;/span>(id: UUID): List&amp;lt;TodoItem&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="business">Business&lt;/h3>
+&lt;p>This layer contains the business logic of the application. Its responsibility is to make sure that business rules are
+enforced in the application. It usually consists of services that perform a certain task, using repositories and
+entities from the &lt;em>Infrastructure&lt;/em> layer.&lt;/p>
+&lt;p>Here&amp;rsquo;s a simple service that can create and remove todo lists (again, in Kotlin):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoListService&lt;/span>(&lt;span style="color:#fc5fa3">val&lt;/span> repository: TodoListRepository) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">createTodoList&lt;/span>(name: String): TodoList {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(name.isNotBlank()) { &lt;span style="color:#fc6a5d">&amp;#34;Name cannot be blank&amp;#34;&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoList = TodoList(&lt;span style="color:#5dd8ff">UUID&lt;/span>.randomUUID(), name)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> repository.save(todoList)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">return&lt;/span> todoList
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">removeTodoList&lt;/span>(todoListToRemove: TodoList) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">if&lt;/span> (todoListToRemove.items.any { !&lt;span style="color:#fc5fa3">it&lt;/span>.done }) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">throw&lt;/span> TodoListNotRemovableException()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> repository.delete(todoListToRemove)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This is a common pattern in these services. They check some business rules and if everything is okay, an action is
+performed. In this example, the business rules are that a todo list must have a name and that a todo list may only be
+deleted if all its todo items are done.&lt;/p>
+&lt;p>Here&amp;rsquo;s an example that creates a new todo item:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoItemService&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">create&lt;/span>(id: UUID, description: String, dueDate: LocalDateTime?): TodoItem {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">if&lt;/span> (dueDate != &lt;span style="color:#fc5fa3">null&lt;/span> &amp;amp;&amp;amp; dueDate.isBefore(&lt;span style="color:#5dd8ff">LocalDateTime&lt;/span>.now()))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">throw&lt;/span> InvalidDueDateException()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoList = todoListRepository.findById(id).orElseThrow { TodoListNotFoundException() }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoItem = TodoItem(id, todoList, description, dueDate)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> todoList.items.add(todoItem)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> todoListRepository.save(todoList)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">return&lt;/span> todoItem
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In this example, besides input validation, we also ensure that we don&amp;rsquo;t try to add a todo item to a list that does not
+exist.&lt;/p>
+&lt;h3 id="presentation">Presentation&lt;/h3>
+&lt;p>In the variants mentioned earlier, the &lt;em>Presentation&lt;/em> layer contains presentation and application logic. Alternatively,
+presentation and application logic can be assigned to separate layers. It contains functionality that is used by end
+users and uses the &lt;em>Business&lt;/em> layer to validate and execute actions that users request. In a backend application that
+exposes a REST API (for example for a frontend or external systems), this layer contains REST controllers.&lt;/p>
+&lt;p>Here&amp;rsquo;s an example of a REST controller, using annotations from Spring Web:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>@RestController
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>@RequestMapping(&lt;span style="color:#fc6a5d">&amp;#34;/api/v1/todo/list&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoListResource&lt;/span>(&lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> todoListService: TodoListService) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @PostMapping
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">create&lt;/span>(@RequestParam name: String): ResponseEntity&amp;lt;TodoListRestModel&amp;gt; {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoList = todoListService.createTodoList(name)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">return&lt;/span> &lt;span style="color:#5dd8ff">ResponseEntity&lt;/span>.status(&lt;span style="color:#5dd8ff">HttpStatus&lt;/span>.CREATED)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .body(&lt;span style="color:#5dd8ff">TodoListRestModel&lt;/span>.from(todoList))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;em>Business&lt;/em> layer is used to create and store the new todo item. The controller makes sure that a HTTP response is
+returned, containing the newly created todo item.&lt;/p>
+&lt;h2 id="code-review">Code review&lt;/h2>
+&lt;p>These code examples are pretty simple and straightforward. That&amp;rsquo;s because the problem domain and the associated business
+rules are simple. You could argue that this code is perfectly fine for such a simple application, and I would agree.&lt;/p>
+&lt;p>Still, I&amp;rsquo;d like to review this code with one important question in mind: &lt;strong>Does it scale?&lt;/strong> Features will be added and
+existing features will be expanded. Systems grow bigger and more complicated, and so does the code. Ideally, we want our
+code to be designed in such a way that it stays maintainable while the system grows.&lt;/p>
+&lt;h3 id="duplication">Duplication&lt;/h3>
+&lt;p>While not directly obvious in the code above, we can see that we&amp;rsquo;re setting ourselves up for code duplication. For
+example, let&amp;rsquo;s expand our &lt;code>TodoListService&lt;/code> with the ability to rename an existing todo list:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">createTodoList&lt;/span>(name: String): TodoList {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(name.isNotBlank()) { &lt;span style="color:#fc6a5d">&amp;#34;Name cannot be blank&amp;#34;&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6c7986">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span> &lt;span style="color:#fc5fa3">return&lt;/span> todoList
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">renameTodoList&lt;/span>(id: UUID, name: String) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(name.isNotBlank()) { &lt;span style="color:#fc6a5d">&amp;#34;Name cannot be blank&amp;#34;&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6c7986">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now we have two functions that accept a name for a todo list. Obviously, a &lt;code>String&lt;/code> can be blank, which we don&amp;rsquo;t want,
+so every time we use a &lt;code>String&lt;/code> for accepting the name of a todo list, we need to check if that &lt;code>String&lt;/code> contains a
+valid name.&lt;/p>
+&lt;p>This problem arises when parameter types accept more values than the domain we&amp;rsquo;re implementing allows for. If that&amp;rsquo;s the
+case, we need input validation to make sure our function is not used in an invalid way. This is an anti-pattern,
+called &lt;a href="https://refactoring.guru/smells/primitive-obsession">Primitive Obsession&lt;/a>. Be aware that this isn&amp;rsquo;t limited to
+the usage of primitives. In general, when we use overly permissive parameter types, we likely need input validation.&lt;/p>
+&lt;h3 id="public-mutable-state">Public mutable state&lt;/h3>
+&lt;p>Some of the state of entities in the &lt;em>Infrastructure&lt;/em> layer can be changed by everyone. Take &lt;code>TodoItem&lt;/code> for example:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>@Entity
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoItem&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @Id &lt;span style="color:#fc5fa3">val&lt;/span> id: UUID,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @ManyToOne
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @JoinColumn(name = &lt;span style="color:#fc6a5d">&amp;#34;todolist_id&amp;#34;&lt;/span>, nullable = &lt;span style="color:#fc5fa3">false&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoList: TodoList,
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> title: String,
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> dueDate: LocalDateTime? = &lt;span style="color:#fc5fa3">null&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> done: Boolean = &lt;span style="color:#fc5fa3">false&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The fields &lt;code>title&lt;/code>, &lt;code>dueDate&lt;/code> and &lt;code>done&lt;/code> have a public setter. This means it&amp;rsquo;s very easy to write code that violates
+business rules that are normally enforced by the &lt;em>Business&lt;/em> layer. For example, we can easily introduce code that
+changes a todo item to have an empty &lt;code>title&lt;/code> or creates a new todo item with a &lt;code>dueDate&lt;/code> in the past.&lt;/p>
+&lt;p>This is an anti-pattern known as &lt;a href="https://refactoring.guru/smells/inappropriate-intimacy">Inappropriate Intimacy&lt;/a> or
+&lt;a href="https://en.wikipedia.org/wiki/Object_orgy">Object Orgy&lt;/a>.&lt;/p>
+&lt;h3 id="lack-of-encapsulation">Lack of encapsulation&lt;/h3>
+&lt;p>The issue of public mutable state is a consequence of another design issue: Data and business logic are separated
+between different classes. Data is modeled as entities, services make sure that the data conforms to the business rules.
+The entities shown here are basically Data Transfer Objects (DTO&amp;rsquo;s). They tell the Object-Relational Mapper (ORM) what
+tables exist, which columns these tables consist of, et cetera.&lt;/p>
+&lt;p>These DTO&amp;rsquo;s are used thoughout the entire code base. While the &lt;em>Business&lt;/em> layer should be enforcing business rules, it&amp;rsquo;s
+very easy to violate business rules by changing DTO&amp;rsquo;s in a REST controller, for example.&lt;/p>
+&lt;p>We&amp;rsquo;re using an object-oriented (OO) language, but by designing our code like this we don&amp;rsquo;t benefit from one of the
+main strengths of OO, which is that data and the associated behaviour are &lt;strong>encapsulated&lt;/strong> in one class. This makes our
+code more error-prone than it needs to be.&lt;/p>
+&lt;h3 id="theres-a-bug">There&amp;rsquo;s a bug!&lt;/h3>
+&lt;p>Maybe you already spotted it, there&amp;rsquo;s a bug in &lt;code>TodoItemService&lt;/code>. Can you find it?&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">create&lt;/span>(id: UUID, description: String, dueDate: LocalDateTime?): TodoItem {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">if&lt;/span> (dueDate != &lt;span style="color:#fc5fa3">null&lt;/span> &amp;amp;&amp;amp; dueDate.isBefore(&lt;span style="color:#5dd8ff">LocalDateTime&lt;/span>.now()))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">throw&lt;/span> InvalidDueDateException()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoList = todoListRepository.findById(id).orElseThrow { TodoListNotFoundException() }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> todoItem = TodoItem(id, todoList, description, dueDate)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> todoList.items.add(todoItem)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> todoListRepository.save(todoList)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">return&lt;/span> todoItem
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>I&amp;rsquo;ve shown this code in several talks I&amp;rsquo;ve given, asking the participants to spot the bug. From my limited &amp;ldquo;testing&amp;rdquo; it
+seems that the bug is surprisingly hard to find just by looking at the code.&lt;/p>
+&lt;p>Now, where&amp;rsquo;s the bug? It&amp;rsquo;s in this line:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> todoItem = TodoItem(id, todoList, description, dueDate)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>id&lt;/code> that is passed to the constructor is the &lt;code>id&lt;/code> of the containing &lt;code>TodoList&lt;/code>! Let&amp;rsquo;s assume the database table for
+todo items has a proper primary key or a unique constraint. If that&amp;rsquo;s the case, this code will fail as soon as we try to
+add a second &lt;code>TodoItem&lt;/code> to a &lt;code>TodoList&lt;/code>, because a duplicate key will be inserted.&lt;/p>
+&lt;p>This is another example of Primitive Obsession. While &lt;code>UUID&lt;/code> isn&amp;rsquo;t a primitive type in the strict sense of the word, it
+&lt;em>is&lt;/em> a type that doesn&amp;rsquo;t tell us anything about what kind of ID it actually represents. When we see just a &lt;code>UUID&lt;/code>, it
+can be hard to determine if it&amp;rsquo;s the ID of a todo list, a todo item, or something entirely unrelated to the domain.&lt;/p>
+&lt;p>&lt;em>Fun fact&lt;/em>: This is a bug that I accidentally introduced when I was preparing this code for a talk. I decided to include
+it in the talk as an example of how Primitive Obsession can easily lead to bugs that can be hard to find.&lt;/p>
+&lt;h2 id="smells">Smells&lt;/h2>
+&lt;p>To summarize, in these code examples we have identified a couple of code smells:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Primitive Obsession&lt;/strong> &amp;ndash; By using primitives or other overly permissive types, we need to duplicate input
+validation.
+Also, it&amp;rsquo;s very easy to introduce bugs when multiple domain concepts are implemented using the same primitive type.&lt;/li>
+&lt;li>&lt;strong>Inappropriate Intimacy&lt;/strong> &amp;ndash; Unrestricted write access to the state of an object can easily lead to violation of
+business rules.&lt;/li>
+&lt;li>&lt;strong>Lack of encapsulation&lt;/strong> &amp;ndash; Data and behaviour are separated into different classes.&lt;/li>
+&lt;/ul>
+&lt;h2 id="principles">Principles&lt;/h2>
+&lt;p>One way we can address the issues we found is by &lt;strong>designing better types&lt;/strong>. In this chapter I&amp;rsquo;d like to provide some
+high-level principles and practices to help in designing better types. In future installments, we&amp;rsquo;ll explore these more
+in-depth.&lt;/p>
+&lt;p>I&amp;rsquo;d like to mention two principles that I think are fundamental to designing with types. The principles are:&lt;/p>
+&lt;ul>
+&lt;li>Illegal states should be unrepresentable&lt;/li>
+&lt;li>State changes should be encapsulated&lt;/li>
+&lt;/ul>
+&lt;h3 id="illegal-states-should-be-unrepresentable">Illegal states should be unrepresentable &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/h3>
+&lt;p>When writing code, the very first feedback we get about our code is from the compiler. This is the shortest possible
+feedback loop we can have.&lt;/p>
+&lt;p>For example, when we try to assign a string to an integer variable, the compiler will immediately complain.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> i: Int = &lt;span style="color:#fc6a5d">&amp;#34;Hello World!&amp;#34;&lt;/span> &lt;span style="color:#6c7986">// &amp;lt;-- Compiler error
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>So the idea behind this principle is that in order to make our feedback loop as short as possible, we &lt;strong>prefer
+compile-time validation over runtime validation&lt;/strong>. We do this by designing types in such a way that it is &lt;strong>impossible&lt;/strong>
+to write &lt;strong>compiling code&lt;/strong> that introduces an illegal state.&lt;/p>
+&lt;h3 id="state-changes-should-be-encapsulated">State changes should be encapsulated&lt;/h3>
+&lt;p>Whenever we&amp;rsquo;re using an object, we should be confident that the state of that object is valid. It&amp;rsquo;s hard to be confident
+about this when the state of an object is freely mutable by everyone. This is why we use &lt;strong>encapsulation&lt;/strong> in OO.&lt;/p>
+&lt;p>So this principle means that we should make each class &lt;strong>exclusively&lt;/strong> responsible for enforcing &lt;strong>its own&lt;/strong> invariants.
+This implies that each class should have &lt;strong>exclusive control&lt;/strong> over its own state changes.&lt;/p>
+&lt;h2 id="principles-in-practice">Principles in practice&lt;/h2>
+&lt;p>So how do we put these principles into practice? Let&amp;rsquo;s look at two simple examples.&lt;/p>
+&lt;h3 id="value-object-pattern">Value Object pattern&lt;/h3>
+&lt;p>This is such a simple design pattern, but it&amp;rsquo;s oh so powerful! A value object represents one single value. This can be a
+complex value consisting of multiple fields (i.e. amount and currency for money).&lt;/p>
+&lt;p>A value object must conform to the following rules:&lt;/p>
+&lt;ul>
+&lt;li>It is immutable&lt;/li>
+&lt;li>It is self-validating&lt;/li>
+&lt;li>The identity of the object is the value itself&lt;/li>
+&lt;/ul>
+&lt;p>Let&amp;rsquo;s look at two examples:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Name&lt;/span>(&lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> value: String) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">init&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(&lt;span style="color:#fc5fa3">value&lt;/span>.isNotBlank()) { &lt;span style="color:#fc6a5d">&amp;#34;Name cannot be blank&amp;#34;&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(&lt;span style="color:#fc5fa3">value&lt;/span>.lines().size == &lt;span style="color:#d0bf69">1&lt;/span>) { &lt;span style="color:#fc6a5d">&amp;#34;Name must have exactly one line&amp;#34;&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Description&lt;/span>(&lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> value: String) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">init&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(&lt;span style="color:#fc5fa3">value&lt;/span>.isNotBlank()) { &lt;span style="color:#fc6a5d">&amp;#34;Description cannot be blank&amp;#34;&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Here we have two value objects, &lt;code>Name&lt;/code> and &lt;code>Description&lt;/code>. Both classes encapsulate an immutable value. Both classes make
+sure that no invalid value is accepted. This is arguably the simplest possible example of encapsulation, but there are
+profound consequences:&lt;/p>
+&lt;ul>
+&lt;li>Functions that accept a &lt;code>Name&lt;/code> and/or a &lt;code>Description&lt;/code> as a parameter don&amp;rsquo;t need input validation for these parameters,
+because that&amp;rsquo;s what the constructors have already done. We can safely assume that the arguments are valid.&lt;/li>
+&lt;li>We write fewer tests, because if we don&amp;rsquo;t need input validation, we don&amp;rsquo;t need to unit tests input validation.&lt;/li>
+&lt;li>We can&amp;rsquo;t confuse parameters. The following code does not compile, because we cannot pass a &lt;code>Description&lt;/code> when a &lt;code>Name&lt;/code>
+is expected.
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">TodoList&lt;/span>(&lt;span style="color:#fc5fa3">val&lt;/span> id: TodoListID, name: Name)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> list = TodoList(&lt;span style="color:#5dd8ff">TodoListID&lt;/span>.create(), Description(&lt;span style="color:#fc6a5d">&amp;#34;Description&lt;/span>&lt;span style="color:#fc6a5d">\n&lt;/span>&lt;span style="color:#fc6a5d">with multiple lines&amp;#34;&lt;/span>)) &lt;span style="color:#6c7986">// &amp;lt;-- Compiler error
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span> &lt;span style="color:#6c7986">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;p>So here we see both principles in practice. We make illegal states unrepresentable because we cannot confuse values with
+different domains. The values in the value objects are encapsulated and guaranteed to be valid, which simplifies our
+code by eliminating the need for duplicated input validation.&lt;/p>
+&lt;h3 id="encapsulation-using-sum-types">Encapsulation using sum types&lt;/h3>
+&lt;p>Here is a slightly more advanced example using a sum type:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">sealed&lt;/span> &lt;span style="color:#fc5fa3">interface&lt;/span> &lt;span style="color:#5dd8ff">TodoItem&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> id: TodoItemID
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> description: Description
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Todo&lt;/span>(&lt;span style="color:#fc5fa3">override&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> id: TodoItemID, &lt;span style="color:#fc5fa3">override&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> description: Description) : TodoItem {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">updateDescription&lt;/span>(newDescription: Description) = &lt;span style="color:#fc5fa3">this&lt;/span>.copy(description = newDescription)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">markAsDone&lt;/span>() = Done(id, description)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Done&lt;/span>(&lt;span style="color:#fc5fa3">override&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> id: TodoItemID, &lt;span style="color:#fc5fa3">override&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> description: Description) : TodoItem
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In this example, we model &lt;code>TodoItem&lt;/code> as a value object. The states (&lt;code>todo&lt;/code> and &lt;code>done&lt;/code>) of a todo item are modeled as
+implementations of the &lt;code>TodoItem&lt;/code> interface. The signatures of these types reveal that the description of a todo item in
+the &lt;code>todo&lt;/code> state can be changed. Todo items that are &lt;code>done&lt;/code> cannot be changed at all&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>.&lt;/p>
+&lt;p>This is another way we can make illegal states unrepresentable using types. In fact, we take it a step further because
+thanks to the sum type, we also make illegal state &lt;strong>changes&lt;/strong> unrepresentable. The following code does not compile:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> item: TodoItem = &lt;span style="color:#5dd8ff">TodoItem&lt;/span>.Done(&lt;span style="color:#5dd8ff">TodoItemID&lt;/span>.create(), Description(&lt;span style="color:#fc6a5d">&amp;#34;Do the laundry&amp;#34;&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> changed: TodoItem =
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">when&lt;/span> (item) {
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">is&lt;/span> &lt;span style="color:#5dd8ff">TodoItem&lt;/span>.Done -&amp;gt; item.updateDescription(Description(&lt;span style="color:#fc6a5d">&amp;#34;Do the dishes&amp;#34;&lt;/span>)) &lt;span style="color:#6c7986">// &amp;lt;-- Compiler error
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span> &lt;span style="color:#fc5fa3">is&lt;/span> &lt;span style="color:#5dd8ff">TodoItem&lt;/span>.Todo -&amp;gt; item
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The sum type forces us to check the state of the todo item, before attempting to do anything with it. If we don&amp;rsquo;t, the
+code simply won&amp;rsquo;t compile. Code that tries to change the description of a &lt;code>done&lt;/code> todo item also doesn&amp;rsquo;t compile.&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>A lot of the code I&amp;rsquo;ve seen and written during my career suffers to some degree from the problems mentioned in this
+article. As said, in simple, small systems there&amp;rsquo;s little harm in having some Primitive Obsession or lack of
+encapsulation. In such cases adding a lot of types can feel like overengineering. This is fine, as long as you are aware
+that the antipatterns can become problematic when the system grows.&lt;/p>
+&lt;p>By designing better types, we can make our code &lt;strong>safer&lt;/strong> to use and easier to understand by explicitly &lt;strong>revealing
+intent&lt;/strong>. In this article we&amp;rsquo;ve seen two simple examples of this.&lt;/p>
+&lt;p>Next up, we&amp;rsquo;ll talk some more about &lt;strong>safety&lt;/strong> and &lt;strong>revealing intent&lt;/strong> and we&amp;rsquo;ll look at more examples of using types
+to our advantage.&lt;/p>
+&lt;div class="footnotes" role="doc-endnotes">
+&lt;hr>
+&lt;ol>
+&lt;li id="fn:1">
+&lt;p>This phrase was coined
+by &lt;a href="https://blog.janestreet.com/effective-ml-revisited/">Yaron Minsky&lt;/a>. &lt;a href="https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/">Scott Wlaschin&lt;/a>
+wrote a very nice article about this, as part of his article series on designing with types using F#.&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:2">
+&lt;p>For the Kotlin-savvy among you: Yes, I know about &lt;code>copy&lt;/code> 😄. We&amp;rsquo;ll address that in a future installment of this
+series.&amp;#160;&lt;a href="#fnref:2" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;/div></content></item><item><title>Designing with types #01: Introduction</title><link>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</link><pubDate>Wed, 21 May 2025 11:25:41 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/01-intro/</guid><content>&lt;summary class="dg-summary">
  &lt;p>Ever had that sinking feeling when a bug sneaks into production, despite all your testing efforts? Yeah, we&amp;rsquo;ve all been
 there! While languages like Java, C#, and Kotlin come with powerful type systems, many developers aren&amp;rsquo;t using them to
 their full potential.&lt;/p>
