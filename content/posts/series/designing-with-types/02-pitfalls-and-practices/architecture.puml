@@ -1,0 +1,31 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+skinparam {
+    backgroundColor transparent
+}
+
+LAYOUT_TOP_DOWN()
+
+System_Boundary(hexagonal, "Hexagonal Architecture") {
+    Component(hex_presentation, "Presentation", "", "Presentation and application logic")
+    Component(hex_business, "Business", "", "Contains the domain model, 'driven' and 'driving' ports")
+    Component(hex_infrastructure, "Infrastructure", "", "Interaction with external systems (i.e. databases)")
+
+    Rel_D(hex_presentation, hex_business, "Uses 'driving' ports from")
+    Rel_D(hex_infrastructure, hex_business, "Implements 'driven' ports from")
+}
+
+System_Boundary(ntier, "N-Tier Architecture") {
+    Component(presentation, "Presentation", "", "Presentation and application logic")
+    Component(business, "Business", "", "Business logic")
+    Component(infrastructure, "Infrastructure", "", "Interaction with external systems (mostly databases)")
+
+    Rel_D(presentation, business, "Uses")
+    Rel_D(business, infrastructure, "Uses")
+}
+
+HIDE_STEREOTYPE()
+
+@enduml
