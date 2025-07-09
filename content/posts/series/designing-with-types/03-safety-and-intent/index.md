@@ -101,7 +101,7 @@ obvious and it's not clear where we can find those constraints.
 #### Refactoring
 
 The first and most obvious thing we can do to improve the safety of this code, is to make `id` immutable. By doing this,
-we eliminate one way to introduce an illegal state.
+we eliminate one way to introduce an illegal state:
 
 ```kotlin {hl_lines=["2"]}
 class Customer(
@@ -112,7 +112,7 @@ class Customer(
 ```
 
 We can make `id`, `name` and `emailAddress` safe by
-introducing [Value Objects](../02-pitfalls-and-practices#value-object-pattern).
+introducing [Value Objects](../02-pitfalls-and-practices#value-object-pattern):
 
 ```kotlin
 class Customer(
@@ -200,7 +200,7 @@ the business rule were close together.
 #### Refactoring
 
 We can improve this by introducing more encapsulation. We do this by merging `OrderService` and `Order`, so we can make
-the setters for `status` and `paymentId` private.
+the setters for `status` and `paymentId` private:
 
 ```kotlin
 class Order(val id: OrderID, val customerId: CustomerID) {
@@ -262,7 +262,7 @@ constructors a descriptive name.
 
 #### Refactoring
 
-We can improve the communication of intent by introducing a factory method.
+We can improve the communication of intent by introducing a factory method:
 
 ```kotlin
 class Order(status: OrderStatus) {
