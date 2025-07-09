@@ -73,14 +73,14 @@ the property types don&amp;rsquo;t reveal any intent at all. The constraints for
 obvious and it&amp;rsquo;s not clear where we can find those constraints.&lt;/p>
 &lt;h4 id="refactoring">Refactoring&lt;/h4>
 &lt;p>The first and most obvious thing we can do to improve the safety of this code, is to make &lt;code>id&lt;/code> immutable. By doing this,
-we eliminate one way to introduce an illegal state.&lt;/p>
+we eliminate one way to introduce an illegal state:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Customer&lt;/span>(
 &lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> id: Long,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> name: String,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> emailAddress: String,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can make &lt;code>id&lt;/code>, &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code> safe by
-introducing &lt;a href="../02-pitfalls-and-practices#value-object-pattern">Value Objects&lt;/a>.&lt;/p>
+introducing &lt;a href="../02-pitfalls-and-practices#value-object-pattern">Value Objects&lt;/a>:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Customer&lt;/span>(
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> id: CustomerID,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> name: CustomerName,
@@ -145,7 +145,7 @@ usually defined in different source files, which could belong to different packa
 the business rule were close together.&lt;/p>
 &lt;h4 id="refactoring-1">Refactoring&lt;/h4>
 &lt;p>We can improve this by introducing more encapsulation. We do this by merging &lt;code>OrderService&lt;/code> and &lt;code>Order&lt;/code>, so we can make
-the setters for &lt;code>status&lt;/code> and &lt;code>paymentId&lt;/code> private.&lt;/p>
+the setters for &lt;code>status&lt;/code> and &lt;code>paymentId&lt;/code> private:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span>(&lt;span style="color:#fc5fa3">val&lt;/span> id: OrderID, &lt;span style="color:#fc5fa3">val&lt;/span> customerId: CustomerID) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus = &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.PENDING
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
@@ -188,7 +188,7 @@ has a private setter. What else? Let&amp;rsquo;s look at how we would instantiat
 what the status of the newly created order is. This is a limitation of constructors in general, because we can&amp;rsquo;t give
 constructors a descriptive name.&lt;/p>
 &lt;h4 id="refactoring-2">Refactoring&lt;/h4>
-&lt;p>We can improve the communication of intent by introducing a factory method.&lt;/p>
+&lt;p>We can improve the communication of intent by introducing a factory method:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span>(status: OrderStatus) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus = status
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
