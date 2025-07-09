@@ -1,4 +1,241 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kotlin on Dirk Groot</title><link>https://dirkgroot.nl/tags/kotlin/</link><description>Recent content in Kotlin on Dirk Groot</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Mon, 30 Jun 2025 09:02:40 +0000</lastBuildDate><atom:link href="https://dirkgroot.nl/tags/kotlin/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing with types #02: Pitfalls and Practices</title><link>https://dirkgroot.nl/posts/series/designing-with-types/02-pitfalls-and-practices/</link><pubDate>Mon, 30 Jun 2025 09:02:40 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/02-pitfalls-and-practices/</guid><content>&lt;summary class="dg-summary">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kotlin on Dirk Groot</title><link>https://dirkgroot.nl/tags/kotlin/</link><description>Recent content in Kotlin on Dirk Groot</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 09 Jul 2025 09:38:34 +0000</lastBuildDate><atom:link href="https://dirkgroot.nl/tags/kotlin/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing with types #03: Safety and Intent</title><link>https://dirkgroot.nl/posts/series/designing-with-types/03-safety-and-intent/</link><pubDate>Wed, 09 Jul 2025 09:38:34 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/03-safety-and-intent/</guid><content>&lt;summary class="dg-summary">
+ In the previous installment of this series, we concluded that we can write code that is &lt;strong>safe&lt;/strong> and that &lt;strong>reveals
+intent&lt;/strong> by making illegal states unrepresentable and by encapsulating state changes. Today, we&amp;rsquo;ll try to come up with
+proper definitions of safety and revealing intent. Also, we&amp;rsquo;ll take a look at more examples of applying these principles
+in practice.
+&lt;/summary>
+
+&lt;h2 id="safety">Safety&lt;/h2>
+&lt;p>What does &lt;strong>safety&lt;/strong> mean in the context of software development in general and designing types in particular? Here&amp;rsquo;s my
+attempt at a &amp;ldquo;formal&amp;rdquo; definition:&lt;/p>
+&lt;summary class="dg-summary">
+ We consider an API to be &lt;strong>safe&lt;/strong> if and only if &lt;strong>everything that&amp;rsquo;s public&lt;/strong> can be used &lt;strong>freely&lt;/strong>, without the risk
+of introducing an illegal state.
+&lt;/summary>
+
+&lt;p>With this definition I&amp;rsquo;m trying to stay as language agnostic as possible. Reason for this is that the concept of safety
+can be applied (to some extent) to every programming language and every paradigm.&lt;/p>
+&lt;p>In this series, we&amp;rsquo;re focusing mainly on strong-typed, object-oriented languages like Kotlin and Java. In those
+languages &lt;strong>everything that&amp;rsquo;s public&lt;/strong> is either a public class, a public method, a public field or (in Kotlin) a public
+top-level function. To be more specific, this definition applies to everything that causes a state change. Things like
+read-only fields or pure functions are always safe according to this definition, because those things don&amp;rsquo;t modify
+anything.&lt;/p>
+&lt;p>So what does this mean in practice for things that do modify something? Let&amp;rsquo;s look at each case individually.&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Public mutable fields&lt;/strong> can only be freely mutable if there exist &lt;strong>zero&lt;/strong> situations where a possible
+value of such a field can be considered invalid. If this is not the case, a field cannot be publicly mutable according
+to this definition.&lt;/li>
+&lt;li>&lt;strong>Public methods and top-level functions&lt;/strong> that change state may &lt;strong>never&lt;/strong> change that state to something invalid.
+According to this definition, such methods or functions must either:
+&lt;ul>
+&lt;li>change the state to something valid;&lt;/li>
+&lt;li>throw an exception;&lt;/li>
+&lt;li>do nothing;&lt;/li>
+&lt;li>or return a value that indicates a failure.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="revealing-intent">Revealing intent&lt;/h2>
+&lt;p>Code is written once, but it&amp;rsquo;s read many times. Therefore we want the code to be easy to understand. For this article
+series, I&amp;rsquo;ll use a pretty narrow definition of revealing intent:&lt;/p>
+&lt;summary class="dg-summary">
+ Code that reveals intent is &lt;strong>explicit&lt;/strong> about what it &lt;strong>does&lt;/strong>, what it &lt;strong>expects&lt;/strong> and what it &lt;strong>results&lt;/strong> in.
+&lt;/summary>
+
+&lt;p>I don&amp;rsquo;t think this definition needs much of an explanation. It doesn&amp;rsquo;t just apply to code. Take a
+typical &lt;a href="https://en.wikipedia.org/wiki/Use_case#Examples">use case template&lt;/a> for example. Such a template will typically
+have room for us to document the goal, the preconditions and the postconditions. In order to properly understand a piece
+of functionality, this is what we typically need to know, regardless of whether we&amp;rsquo;re reading code or a use case.&lt;/p>
+&lt;p>This series is about designing with types, so here we&amp;rsquo;ll be focusing on revealing intent using types. As we&amp;rsquo;ll see,
+types are a very powerful way of revealing intent. This is because types allow us to give important concepts a proper
+&lt;strong>name&lt;/strong> and because by defining types, we can leverage the &lt;strong>power of the compiler&lt;/strong> to enforce intended usage.&lt;/p>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>With the principles from the &lt;a href="../02-pitfalls-and-practices">previous article&lt;/a> in mind, let&amp;rsquo;s look at some practical
+examples. Every example will start by reviewing a piece of code, evaluating whether it&amp;rsquo;s safe and if it reveals intent.&lt;/p>
+&lt;h3 id="properties">Properties&lt;/h3>
+&lt;h4 id="code-review">Code review&lt;/h4>
+&lt;p>Let&amp;rsquo;s look at this &lt;code>Customer&lt;/code> class:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Customer&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> id: Long,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> name: String,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> emailAddress: String,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There&amp;rsquo;s no context in this example, but it&amp;rsquo;s not hard to see that this code probably isn&amp;rsquo;t safe:&lt;/p>
+&lt;ul>
+&lt;li>The &lt;code>id&lt;/code> field is publicly mutable, but it&amp;rsquo;s generally not recommended to change the primary key of an entity.&lt;/li>
+&lt;li>The &lt;code>id&lt;/code> field is a plain &lt;code>Long&lt;/code>, but negative values are probably not allowed.&lt;/li>
+&lt;li>The &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code> fields are plain &lt;code>String&lt;/code>s, but it&amp;rsquo;s highly unlikely that every possible &lt;code>String&lt;/code>
+is a valid value for these fields.&lt;/li>
+&lt;/ul>
+&lt;p>Let&amp;rsquo;s assume that in this case, it&amp;rsquo;s safe that &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code> are publicly mutable.&lt;/p>
+&lt;p>The code does reveal intent to some degree, but it&amp;rsquo;s the bare minimum. It uses helpful names for the properties, but
+the property types don&amp;rsquo;t reveal any intent at all. The constraints for the &lt;code>id&lt;/code>, &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code> are not
+obvious and it&amp;rsquo;s not clear where we can find those constraints.&lt;/p>
+&lt;h4 id="refactoring">Refactoring&lt;/h4>
+&lt;p>The first and most obvious thing we can do to improve the safety of this code, is to make &lt;code>id&lt;/code> immutable. By doing this,
+we eliminate one way to introduce an illegal state.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Customer&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> id: Long,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> name: String,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> emailAddress: String,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can make &lt;code>id&lt;/code>, &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code> safe by
+introducing &lt;a href="../02-pitfalls-and-practices#value-object-pattern">Value Objects&lt;/a>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Customer&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> id: CustomerID,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> name: CustomerName,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> emailAddress: EmailAddress,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">CustomerID&lt;/span>(&lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> value: Long) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">init&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(&lt;span style="color:#fc5fa3">value&lt;/span> &amp;gt;= &lt;span style="color:#d0bf69">0L&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">CustomerName&lt;/span>(&lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> value: String) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">init&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(&lt;span style="color:#fc5fa3">value&lt;/span>.isNotBlank())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">data&lt;/span> &lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">EmailAddress&lt;/span>(&lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">val&lt;/span> value: String) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">init&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> require(isValidEmailAddress(&lt;span style="color:#fc5fa3">value&lt;/span>)) &lt;span style="color:#6c7986">// let&amp;#39;s pretend we have this function available somewhere 😉
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Just like in the previous article, we can see the power of the Value Object pattern. With one refactoring, we made two
+improvements:&lt;/p>
+&lt;ol>
+&lt;li>The code is now safe. There is simply no way we can write compiling code that introduces an illegal state. The
+code will either not compile or we&amp;rsquo;ll get an exception for trying to introduce an illegal state. We cannot
+accidentally swap &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code>, because that code won&amp;rsquo;t compile:
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> customer = Customer(id = CustomerID(&lt;span style="color:#d0bf69">0&lt;/span>), name = EmailAddress(&lt;span style="color:#fc6a5d">&amp;#34;name@example.com&amp;#34;&lt;/span>), emailAddress = CustomerName(&lt;span style="color:#fc6a5d">&amp;#34;John Johnsson&amp;#34;&lt;/span>))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>We cannot give &lt;code>id&lt;/code> an invalid value, because that will throw an exception:
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> id = CustomerID(-&lt;span style="color:#d0bf69">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>The code reveals intent much more clearly. The constructor arguments of &lt;code>Customer&lt;/code> all have a type with a proper
+name, which makes it obvious that acceptable values for those arguments belong to a certain domain. It&amp;rsquo;s also easy to
+find the constraints for &lt;code>id&lt;/code>, &lt;code>name&lt;/code> and &lt;code>emailAddress&lt;/code>. We simply use our IDE to navigate to the type definitions
+of the corresponding Value Objects and we&amp;rsquo;ll have all the information we need.&lt;/li>
+&lt;/ol>
+&lt;h3 id="simple-business-rules">Simple business rules&lt;/h3>
+&lt;h4 id="code-review-1">Code review&lt;/h4>
+&lt;p>Here&amp;rsquo;s an &lt;code>Order&lt;/code> class:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> id: OrderID,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">val&lt;/span> customerId: CustomerID,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> paymentId: PaymentID?,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Here&amp;rsquo;s a service that makes sure that orders that have not been payed cannot be completed:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">OrderService&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">completeOrder&lt;/span>(order: Order) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">if&lt;/span> (order.paymentId != &lt;span style="color:#fc5fa3">null&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> order.status = &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.COMPLETED
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>Order&lt;/code> class uses Value Objects and &lt;code>id&lt;/code> and &lt;code>customerId&lt;/code> are immutable, so it&amp;rsquo;s pretty safe, except that
+&lt;code>status&lt;/code> is publicly mutable. We can easily create an order with status &lt;code>OrderStatus.COMPLETED&lt;/code> while it has not been
+payed. We just circumvent &lt;code>OrderService&lt;/code> and call the &lt;code>Order&lt;/code> constructor directly:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">// This code compiles and throws no exceptions
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6c7986">&lt;/span>&lt;span style="color:#fc5fa3">val&lt;/span> order = Order(OrderID(&lt;span style="color:#d0bf69">1&lt;/span>), CustomerID(&lt;span style="color:#d0bf69">2&lt;/span>), &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.COMPLETED, &lt;span style="color:#fc5fa3">null&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The code above communicates intent via &lt;code>OrderService&lt;/code>, but &lt;code>Order&lt;/code> and &lt;code>OrderService&lt;/code> are different classes which are
+usually defined in different source files, which could belong to different packages. It would be clearer if the data and
+the business rule were close together.&lt;/p>
+&lt;h4 id="refactoring-1">Refactoring&lt;/h4>
+&lt;p>We can improve this by introducing more encapsulation. We do this by merging &lt;code>OrderService&lt;/code> and &lt;code>Order&lt;/code>, so we can make
+the setters for &lt;code>status&lt;/code> and &lt;code>paymentId&lt;/code> private.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span>(&lt;span style="color:#fc5fa3">val&lt;/span> id: OrderID, &lt;span style="color:#fc5fa3">val&lt;/span> customerId: CustomerID) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus = &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.PENDING
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> paymentId: PaymentID? = &lt;span style="color:#fc5fa3">null&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">complete&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">if&lt;/span> (paymentId != &lt;span style="color:#fc5fa3">null&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> status = &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.COMPLETED
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">throw&lt;/span> IllegalStateException(&lt;span style="color:#fc6a5d">&amp;#34;Cannot complete an order that has not been payed&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With this refactoring we made multiple improvements:&lt;/p>
+&lt;ul>
+&lt;li>The code is now safe, because all state changes changes are encapsulated inside the &lt;code>Order&lt;/code> class. This doesn&amp;rsquo;t
+compile, because of the private setter for &lt;code>status&lt;/code>:
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> order = Order(OrderID(&lt;span style="color:#d0bf69">1&lt;/span>), CustomerID(&lt;span style="color:#d0bf69">2&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span>order.status = &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.COMPLETED &lt;span style="color:#6c7986">// &amp;lt;- Compiler error
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>And this raises an exception:
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> order = Order(OrderID(&lt;span style="color:#d0bf69">1&lt;/span>), CustomerID(&lt;span style="color:#d0bf69">2&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex; background-color:#353539">&lt;span>order.complete() &lt;span style="color:#6c7986">// &amp;lt;- BOOM!
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>Intent is clearer, because the data and the business rule are defined in one class instead of two.&lt;/li>
+&lt;li>Intent is also more clear, because the &lt;code>Order&lt;/code> constructor contains only fields that are relevant for creating an
+order in the initial state. All state changes are done using methods like &lt;code>complete&lt;/code> (I omitted other methods for
+brevity).&lt;/li>
+&lt;/ul>
+&lt;h3 id="statuses">Statuses&lt;/h3>
+&lt;h4 id="code-review-2">Code review&lt;/h4>
+&lt;p>Coming back to the &lt;code>Order&lt;/code> class, let&amp;rsquo;s zoom in on the order status:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus = &lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.PENDING
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>What can we say about such a small piece of code? Well, first of all it looks pretty safe, because the &lt;code>status&lt;/code> field
+has a private setter. What else? Let&amp;rsquo;s look at how we would instantiate this class:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> order = Order()
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We&amp;rsquo;ve lost some information compared to the class definition. From this constructor invocation alone, it&amp;rsquo;s not obvious
+what the status of the newly created order is. This is a limitation of constructors in general, because we can&amp;rsquo;t give
+constructors a descriptive name.&lt;/p>
+&lt;h4 id="refactoring-2">Refactoring&lt;/h4>
+&lt;p>We can improve the communication of intent by introducing a factory method.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span>(status: OrderStatus) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus = status
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">companion&lt;/span> &lt;span style="color:#fc5fa3">object&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">createPending&lt;/span>(): Order = Order(&lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.PENDING)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now, we can instantiate a new &lt;code>Order&lt;/code> using the &lt;code>createPending&lt;/code> factory:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#fc5fa3">val&lt;/span> order = &lt;span style="color:#5dd8ff">Order&lt;/span>.createPending()
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This is clearly an improvement. By using the factory we are explicit about the state of a newly created &lt;code>Order&lt;/code>.
+Unfortunately, there&amp;rsquo;s a downside: We now have a public constructor that accepts any &lt;code>OrderStatus&lt;/code>. We have potentially
+introduced the same safety issue we addressed in the previous example.&lt;/p>
+&lt;p>Fortunately, the solution is simple. We&amp;rsquo;ll just make the constructor &lt;code>private&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span style="display:flex; background-color:#353539">&lt;span>&lt;span style="color:#fc5fa3">class&lt;/span> &lt;span style="color:#5dd8ff">Order&lt;/span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">constructor&lt;/span>(status: OrderStatus) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">var&lt;/span> status: OrderStatus = status
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">private&lt;/span> &lt;span style="color:#fc5fa3">set&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">companion&lt;/span> &lt;span style="color:#fc5fa3">object&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#fc5fa3">fun&lt;/span> &lt;span style="color:#41a1c0">createPending&lt;/span>(): Order = Order(&lt;span style="color:#5dd8ff">OrderStatus&lt;/span>.PENDING)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now, the design is safe again. There&amp;rsquo;s only one way to create a new &lt;code>Order&lt;/code>, which is via the &lt;code>createPending&lt;/code> factory.&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>We identified two requirements and two design principles to help us write code that is robust and maintainable. The
+requirements are:&lt;/p>
+&lt;summary class="dg-summary">
+ &lt;p>We should design API&amp;rsquo;s so that&lt;/p>
+&lt;ul>
+&lt;li>they are always &lt;strong>safe&lt;/strong> to use;&lt;/li>
+&lt;li>they &lt;strong>reveal intent&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/summary>
+
+&lt;p>We can achieve this by using the design principles we discussed in
+the &lt;a href="../02-pitfalls-and-practices#principles">previous article&lt;/a>:&lt;/p>
+&lt;summary class="dg-summary">
+ &lt;ul>
+&lt;li>Illegal states should be unrepresentable.&lt;/li>
+&lt;li>State changes should be encapsulated.&lt;/li>
+&lt;/ul>
+
+&lt;/summary>
+
+&lt;p>We&amp;rsquo;ve seen various examples of how to put this into practice. Until now, the code examples we looked at were rather
+simple and straightforward. In the next installment we&amp;rsquo;ll conclude this series by looking at a few examples that are
+less straightforward.&lt;/p></content></item><item><title>Designing with types #02: Pitfalls and Practices</title><link>https://dirkgroot.nl/posts/series/designing-with-types/02-pitfalls-and-practices/</link><pubDate>Mon, 30 Jun 2025 09:02:40 +0000</pubDate><guid>https://dirkgroot.nl/posts/series/designing-with-types/02-pitfalls-and-practices/</guid><content>&lt;summary class="dg-summary">
  In this installment of my Designing with Types series, we&amp;rsquo;ll look at how some typical backend code is set up. We&amp;rsquo;ll
 identify some common pitfalls and identify best practices to avoid these pitfalls.
 &lt;/summary>
